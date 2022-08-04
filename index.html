@@ -10,6 +10,28 @@
   <title>Library</title>
 </head>
 <body>
-  
+  <header>
+    <h1>Library</h1>
+  </header>
+
+  <main class="grid">
+    <div class="add"><span>+</span></div>
+  </main>
+
+  <div class="overlay hidden">
+    <form>
+      <input type="text" name="author" placeholder="Author" required minlength="3" maxlength="300">
+      <input type="text" name="title" placeholder="Title" required minlength="3" maxlength="300">
+      <input type="number" name="pages" placeholder="Pages" min="1" max="10000" required>
+      <div>
+        <label for="read">Have you read it?</label>
+        <input type="checkbox" name="read" id="read">
+      </div>
+      <div class="buttons-wrapper">
+        <button class="cancel">Cancel</button>
+        <button class="submit">Add</button>
+      </div>
+    </form>
+  </div>
 </body>
 </html>
