@@ -1,7 +1,228 @@
+:root {
+  --bg-color: #f4f4f5;
+  --positive-color: 144, 238, 144;
+  --positive-full-color: 62, 252, 62;
+  --negative-color: 240, 128, 128;
+  --negative-full-color: 234, 85, 85;
+  --edit-btn-color: 5, 196, 196;
+  --button-color: 0, 0, 0;
+  --brd-radius: 8px;
+
+  --space-size0: 10px;
+  --space-size1: 20px;
+  --space-size2: 40px;
+
+  --int: 1.2;
+  --scale0: 1rem;
+  --scale1: calc(var(--scale0) * var(--int));
+  --scale2: calc(var(--scale1) * var(--int));
+}
+
 html {
   box-sizing: border-box;
+  height: 100%;
+  font-size: 100%;
 }
 
 *, *::before, *::after {
   box-sizing: inherit;
+}
+
+body {
+  height: 100%;
+  min-height: 100%;
+  min-width: 300px;
+  
+  background-color: var(--bg-color);
+  font-size: var(--scale1);
+}
+
+header {
+  display: flex;
+  align-items: center;
+  height: 20vh;
+  background-color: white;
+}
+
+header,
+.card,
+.add {
+  box-shadow: 4px 4px 8px 2px lightgray;
+}
+
+h1 {
+  margin: 0;
+  margin-left: var(--space-size2);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-auto-rows: minmax(380px, 1fr);
+  gap: var(--space-size1);
+
+  max-width: 1300px;
+  padding: var(--space-size0);
+  margin: auto;
+}
+
+.card,
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-size1);
+
+  padding: var(--space-size1);
+  text-align: center;
+  background-color: white;
+}
+
+form {
+  width: 300px;
+}
+
+.overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hidden {
+  display: none;
+}
+
+button,
+.add {
+  cursor: pointer;
+}
+
+.add {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 150px;
+  height: 150px;
+  font-size: 75px;
+  justify-self: center;
+  align-self: center;
+
+  padding: var(--space-size1);
+  text-align: center;
+  background-color: rgb(var(--button-color));
+  color: white;
+  transition: all 0.5s;
+}
+
+.add span {
+  transition: transform 0.6s;
+}
+
+.add:hover {
+  transform: scale(1.3);
+}
+
+.add:hover span {
+  transform: rotate(180deg);
+}
+
+button,
+form,
+input[type="text"],
+input[type="number"],
+.card,
+.add {
+  border-radius: var(--brd-radius);
+}
+
+input[type="text"],
+input[type="number"] {
+  border: 1px solid black;
+}
+
+.author,
+.title {
+  height: 66px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+  overflow-wrap: break-word;
+}
+
+.read {
+  width: 100%;
+  padding: 10px 20px;
+  margin-top: var(--space-size1);
+  background-color: rgb(var(--negative-color));
+  border: none;
+}
+
+.read:hover {
+  background-color: rgb(var(--negative-full-color));
+}
+
+.positive-read {
+  background-color: rgb(var(--positive-color));
+}
+
+.positive-read:hover {
+  background-color: rgb(var(--positive-full-color));
+}
+
+.buttons-wrapper {
+  display: flex;
+}
+
+.buttons-wrapper > * {
+  flex: 1;
+  padding: 10px 20px;
+  background-color: rgb(var(--button-color));
+  color: white;
+}
+
+.buttons-wrapper *:first-child {
+  border-radius: var(--brd-radius) 0 0 var(--brd-radius);
+}
+
+.buttons-wrapper *:last-child {
+  border-radius: 0 var(--brd-radius) var(--brd-radius) 0;
+}
+
+.edit:hover {
+  color: rgb(var(--edit-btn-color));
+  box-shadow: 0 3px rgb(var(--edit-btn-color));
+}
+
+.delete:hover,
+.cancel:hover {
+  color: rgb(var(--negative-color));
+  box-shadow: 0 3px rgb(var(--negative-color));
+}
+
+.submit:hover {
+  color: rgb(var(--positive-color));
+  box-shadow: 0 3px rgb(var(--positive-color));
+}
+
+@media screen and (min-width: 425px) {
+  .grid {
+    padding: var(--space-size1);
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .grid {
+    gap: var(--space-size2);
+    padding: var(--space-size2);
+  }
 }
