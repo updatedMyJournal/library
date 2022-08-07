@@ -1,6 +1,12 @@
 'use strict';
 
+let grid = document.querySelector('.grid');
+let form = document.querySelector('form');
 let addButton = document.querySelector('.add');
+let cancelButton = form.querySelector('.cancel');
+let submitButton = form.querySelector('.submit');
+let overlay = document.querySelector('.overlay');
+let currentCard;
 
 class BookStorage extends Map {
   saveBook(bookObj) {
@@ -43,6 +49,143 @@ class Book {
 }
 
 let bookStorage = getFromLocalStorage() ?? new BookStorage();
+
+displayBookCards();
+
+grid.onclick = (e) => {
+  if (e.target.closest('.add')) {
+    submitButton.textContent = 'Add';
+    submitButton.className = 'submit';
+    
+    showForm();
+  } else if (e.target.closest('.edit')) {
+    submitButton.textContent = 'Edit';
+    submitButton.className = 'edit';
+    currentCard = getCard(e.target);
+
+    let bookObj = getBookObjFromBookStorage(e.target);
+
+    form.author.value = bookObj.author;
+    form.title.value = bookObj.title;
+    form.pages.value = bookObj.pages;
+    form.read.checked = bookObj.read;
+
+    showForm();
+  } else if (e.target.closest('.delete')) {
+    let bookObj = getBookObjFromBookStorage(e.target);
+    let card = getCard(e.target);
+
+    bookStorage.deleteBook(bookObj);
+    card.remove();
+  } else if (e.target.closest('.read')) {
+    toggleReadButton(e.target);
+  }
+
+  return;
+};
+
+overlay.onpointerdown = (e) => {
+  if (e.target.closest('form')) return;
+
+  hideAndResetForm();
+};
+
+form.onsubmit = (e) => {
+  e.preventDefault();
+
+  if (e.submitter.classList.contains('submit')) {
+    onBookAdd();
+  } else if (e.submitter.classList.contains('edit')) {
+    onBookEdit(currentCard);
+  }
+
+  hideAndResetForm();
+};
+
+cancelButton.onclick = hideAndResetForm;
+
+function showForm() {
+  overlay.classList.remove('hidden');
+  form.removeAttribute('novalidate');
+}
+
+function hideAndResetForm() {
+  form.setAttribute('novalidate', '');
+  overlay.classList.add('hidden');
+
+  resetForm();
+}
+
+function resetForm() {
+  form.author.value = null;
+  form.title.value = null;
+  form.pages.value = null;
+  form.read.checked = false;
+
+  submitButton.onclick = null;
+  currentCard == null;
+}
+
+function onBookAdd() {
+  let index = calculateIndex();
+
+  let newBook = new Book(
+    { 
+      author: form.author.value,
+      title: form.title.value,
+      pages: form.pages.value,
+      read: form.read.checked,
+      index
+    }
+  );
+
+  if (checkIfBookExists(newBook)) {
+    // TODO: error message or something
+    alert('The book already exists!');
+    return;
+  }
+
+  createBookCard(newBook);
+  bookStorage.saveBook(newBook);
+}
+
+function onBookEdit(elem) {
+  let bookObj = getBookObjFromBookStorage(elem);
+
+  bookObj.author = form.author.value;
+  bookObj.title = form.title.value; 
+  bookObj.pages = form.pages.value;
+  bookObj.read = form.read.checked;
+
+  refreshBookCard(elem);
+  bookStorage.saveBook(bookObj);
+}
+
+function refreshBookCard(elem) {
+  let bookObj = getBookObjFromBookStorage(elem);
+  let card = getCard(elem);
+
+  card.querySelector('.author').textContent = bookObj.author;
+  card.querySelector('.title').textContent = bookObj.title;
+  card.querySelector('.pages').textContent = `${bookObj.pages} page(s)`;
+
+  let readElem = card.querySelector('.read');
+
+  if (bookObj.read) {
+    readElem.classList.add('positive-read');
+  } else {
+    readElem.classList.remove('positive-read');
+  }
+}
+
+// TODO: change text on toggle
+function toggleReadButton(elem) {
+  let bookObj = getBookObjFromBookStorage(elem);
+
+  elem.classList.toggle('positive-read');
+  bookObj.read = !bookObj.read;
+  bookStorage.saveBook(bookObj);
+}
 
 function displayBookCards() {
   for (let book of bookStorage.values()) {
@@ -87,9 +230,31 @@ function getFromLocalStorage() {
   return obj;
 }
 
+function checkIfBookExists({title: newTitle} = bookObj) {
+  for (let {title} of bookStorage.values()) {
+    if (title === newTitle) return true;
+  }
+}
+
 function getBookObjFromBookStorage(elem) {
   let card = getCard(elem)
   let index = Number(card.dataset.index);
 
   return bookStorage.get(index);
+}
+
+function getCard(elem) {
+  return elem.closest('.card');
+}
+
+function calculateIndex() {
+  let newIndex = 0;
+
+  if (bookStorage.size > 0) {
+    let lastIndex = [...bookStorage.keys()].at(-1);
+
+    newIndex = lastIndex + 1;
+  }
+
+  return newIndex;
 }
