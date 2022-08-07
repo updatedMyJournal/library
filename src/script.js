@@ -50,6 +50,21 @@ class Book {
 
 let bookStorage = getFromLocalStorage() ?? new BookStorage();
 
+//test
+if (!localStorage.getItem('testMarker')) {
+  let testBook = new Book(
+    {
+      author: 'Lewis Carroll',
+      title: 'Alice\'s Adventures in Wonderland', 
+      pages: '70', read: false, 
+      index: 1
+    }
+  );
+
+  localStorage.setItem('testMarker', 'true');
+  bookStorage.saveBook(testBook);
+}
+
 displayBookCards();
 
 grid.onclick = (e) => {
