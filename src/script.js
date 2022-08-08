@@ -50,7 +50,7 @@ class Book {
 
 let bookStorage = getFromLocalStorage() ?? new BookStorage();
 
-//test
+// a test book
 if (!localStorage.getItem('testMarker')) {
   let testBook = new Book(
     {
@@ -193,13 +193,17 @@ function refreshBookCard(elem) {
   }
 }
 
-// TODO: change text on toggle
 function toggleReadButton(elem) {
   let bookObj = getBookObjFromBookStorage(elem);
 
-  elem.classList.toggle('positive-read');
   bookObj.read = !bookObj.read;
+  elem.classList.toggle('positive-read');
+  elem.textContent = getReadButtonText(bookObj.read);
   bookStorage.saveBook(bookObj);
+}
+
+function getReadButtonText(readBookBefore) {
+  return readBookBefore ? 'Read' : 'Haven\'t read';
 }
 
 function displayBookCards() {
@@ -214,7 +218,7 @@ function createBookCard({author, title, pages, read, index}) {
       <div class="author">${author}</div>
       <div class="title">${title}</div>
       <div class="pages">${pages} page(s)</div>
-      <button class="read${read ? " positive-read" : ""}">Read</button>
+      <button class="read${read ? " positive-read" : ""}">${getReadButtonText(read)}</button>
       <div class="buttons-wrapper">
         <button class="edit">Edit</button>
         <button class="delete">Delete</button>
