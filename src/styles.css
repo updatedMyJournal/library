@@ -168,6 +168,10 @@ input[type="number"] {
   overflow-wrap: break-word;
 }
 
+button {
+  transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
 .read {
   width: 100%;
   padding: 10px 20px;
