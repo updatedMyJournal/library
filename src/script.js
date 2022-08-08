@@ -117,11 +117,28 @@ form.onsubmit = (e) => {
   hideAndResetForm();
 };
 
+form.onkeydown = (e) => {
+  let targetInputField = e.target.closest('input');
+
+  if (!targetInputField) return;
+  
+   if (e.code == 'Enter') {
+    e.preventDefault();
+    form.requestSubmit(submitButton);
+  }
+}
+
+form.addEventListener('keydown', handleKeyNavigationInForm);
+
 cancelButton.onclick = hideAndResetForm;
 
 function showForm() {
   overlay.classList.remove('hidden');
   form.removeAttribute('novalidate');
+
+  document.onkeydown = (e) => {
+    if (e.code == 'Escape') hideAndResetForm();
+  }
 }
 
 function hideAndResetForm() {
@@ -137,6 +154,7 @@ function resetForm() {
   form.pages.value = null;
   form.read.checked = false;
 
+  document.onkeydown = null;
   submitButton.onclick = null;
   currentCard == null;
 }
@@ -276,4 +294,28 @@ function calculateIndex() {
   }
 
   return newIndex;
+}
+
+function handleKeyNavigationInForm(e) {
+  let keyPressed = e.code;
+  let firstFormElem = form.author;
+  let lastFormElem = submitButton;
+
+  if (
+    keyPressed == 'Tab'
+    && !e.shiftKey
+    && e.target == lastFormElem
+    && document.activeElement == lastFormElem
+  ) {
+    firstFormElem.focus();
+    e.preventDefault();
+  } else if (
+    keyPressed == 'Tab'
+    && e.shiftKey
+    && e.target == firstFormElem
+    && document.activeElement == firstFormElem
+  ) {
+    lastFormElem.focus();
+    e.preventDefault();
+  }
 }
