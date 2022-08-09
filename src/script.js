@@ -242,7 +242,7 @@ function createBookCard({author, title, pages, read, index}) {
   addButton.insertAdjacentHTML('beforebegin', 
     `<div class="card" data-index=${index}>
       <div class="author">${author}</div>
-      <div class="title">${title}</div>
+      <div class="title">"${title}"</div>
       <div class="pages">${pages} page(s)</div>
       <button class="read${read ? " positive-read" : ""}">${getReadButtonText(read)}</button>
       <div class="buttons-wrapper">
