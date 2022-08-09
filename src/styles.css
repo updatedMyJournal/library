@@ -63,6 +63,7 @@ h1 {
 
   max-width: 1300px;
   padding: var(--space-size0);
+  padding-top: var(--space-size1);
   margin: auto;
 }
 
