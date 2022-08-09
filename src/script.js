@@ -85,6 +85,7 @@ grid.onclick = (e) => {
     form.pages.value = bookObj.pages;
     form.read.checked = bookObj.read;
 
+    e.target.blur();
     showForm();
   } else if (e.target.closest('.delete')) {
     let bookObj = getBookObjFromBookStorage(e.target);
@@ -94,6 +95,7 @@ grid.onclick = (e) => {
     card.remove();
   } else if (e.target.closest('.read')) {
     toggleReadButton(e.target);
+    e.target.blur();
   }
 
   return;
@@ -107,23 +109,20 @@ overlay.onpointerdown = (e) => {
 
 form.onsubmit = (e) => {
   e.preventDefault();
-
-  if (
-    (e.submitter.classList.contains('submit') || e.submitter.classList.contains('edit'))
-    && doesBookAlreadyExist()
-  ) {
-    form.classList.add('error');
-    form.title.oninput = () => {
-      form.classList.remove('error');
-      form.title.oninput = null;
-    };
-
-    return;
-  }
   
   if (e.submitter.classList.contains('submit')) {
+    if (doesBookAlreadyExist()) {
+      showError();
+      return;
+    }
+
     onBookAdd();
   } else if (e.submitter.classList.contains('edit')) {
+    if (doesBookAlreadyExist(true)) {
+      showError();
+      return;
+    }
+
     onBookEdit(currentCard);
   }
 
@@ -149,9 +148,21 @@ function showForm() {
   overlay.classList.remove('hidden');
   form.removeAttribute('novalidate');
 
+  // for hoverout on add button when form is visible
+  addButton.style.pointerEvents = "none"; 
+  addButton.blur();
+
   document.onkeydown = (e) => {
     if (e.code == 'Escape') hideAndResetForm();
   }
+}
+
+function showError() {
+  form.classList.add('error');
+  form.title.oninput = () => {
+    form.classList.remove('error');
+    form.title.oninput = null;
+  };
 }
 
 function hideAndResetForm() {
@@ -171,6 +182,7 @@ function resetForm() {
   document.onkeydown = null;
   submitButton.onclick = null;
   currentCard == null;
+  addButton.style.pointerEvents = ""; 
 }
 
 function onBookAdd() {
@@ -205,17 +217,31 @@ function onBookEdit(elem) {
 function refreshBookCard(elem) {
   let bookObj = getBookObjFromBookStorage(elem);
   let card = getCard(elem);
+  let cardAuthor = card.querySelector('.author');
+  let cardTitle = card.querySelector('.title');
+  let cardPages = card.querySelector('.pages');
+  let cardRead = card.querySelector('.read');
 
-  card.querySelector('.author').textContent = bookObj.author;
-  card.querySelector('.title').textContent = bookObj.title;
-  card.querySelector('.pages').textContent = `${bookObj.pages} page(s)`;
+  cardAuthor.textContent = bookObj.author;
+  cardTitle.textContent = bookObj.title;
+  cardPages.textContent = `${bookObj.pages} page(s)`;
 
-  let readElem = card.querySelector('.read');
+  if (tooManySymbols(cardAuthor.textContent)) {
+    cardAuthor.title = cardAuthor.textContent;
+  } else {
+    cardAuthor.removeAttribute('title');
+  }
+
+  if (tooManySymbols(cardTitle.textContent)) {
+    cardTitle.title = cardTitle.textContent;
+  } else {
+    cardTitle.removeAttribute('title');
+  }
 
   if (bookObj.read) {
-    readElem.classList.add('positive-read');
+    cardRead.classList.add('positive-read');
   } else {
-    readElem.classList.remove('positive-read');
+    cardRead.classList.remove('positive-read');
   }
 }
 
@@ -241,8 +267,8 @@ function displayBookCards() {
 function createBookCard({author, title, pages, read, index}) {
   addButton.insertAdjacentHTML('beforebegin', 
     `<div class="card" data-index=${index}>
-      <div class="author">${author}</div>
-      <div class="title">"${title}"</div>
+      <div class="author" ${tooManySymbols(author) ? `title=${author}`: ''}>${author}</div>
+      <div class="title" ${tooManySymbols(title) ? `title=${title}`: ''}>${title}</div>
       <div class="pages">${pages} page(s)</div>
       <button class="read${read ? " positive-read" : ""}">${getReadButtonText(read)}</button>
       <div class="buttons-wrapper">
@@ -251,6 +277,10 @@ function createBookCard({author, title, pages, read, index}) {
       </div>
      </div>`
   );
+}
+
+function tooManySymbols(str) {
+  return str.length > 57;
 }
 
 function getFromLocalStorage() {
@@ -275,14 +305,21 @@ function getFromLocalStorage() {
   return obj;
 }
 
-function doesBookAlreadyExist() {
+function doesBookAlreadyExist(edit = false) {
   let newTitle = form.title.value.toLowerCase();
+  let bookObjBeingEdited;
 
-  for (let { title } of bookStorage.values()) {
-    let alreadyExistingTitle = title.toLowerCase();
+  if (edit) bookObjBeingEdited = getBookObjFromBookStorage(currentCard);
+    
+  for (let bookObj of bookStorage.values()) {
+    let alreadyStoredTitle = bookObj.title.toLowerCase();
 
-    if (newTitle === alreadyExistingTitle) return true;
+    if (edit && bookObj === bookObjBeingEdited) continue;
+
+    if (newTitle === alreadyStoredTitle) return true;
   }
+
+  return false;
 }
 
 function getBookObjFromBookStorage(elem) {

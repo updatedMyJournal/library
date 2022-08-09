@@ -193,6 +193,11 @@ input[type="number"] {
   overflow-wrap: break-word;
 }
 
+.title::before,
+.title::after {
+  content: '"';
+}
+
 button {
   transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
 }
