@@ -108,6 +108,19 @@ overlay.onpointerdown = (e) => {
 form.onsubmit = (e) => {
   e.preventDefault();
 
+  if (
+    (e.submitter.classList.contains('submit') || e.submitter.classList.contains('edit'))
+    && doesBookAlreadyExist()
+  ) {
+    form.classList.add('error');
+    form.title.oninput = () => {
+      form.classList.remove('error');
+      form.title.oninput = null;
+    };
+
+    return;
+  }
+  
   if (e.submitter.classList.contains('submit')) {
     onBookAdd();
   } else if (e.submitter.classList.contains('edit')) {
@@ -151,6 +164,7 @@ function hideAndResetForm() {
 function resetForm() {
   form.author.value = null;
   form.title.value = null;
+  form.classList.remove('error');
   form.pages.value = null;
   form.read.checked = false;
 
@@ -171,12 +185,6 @@ function onBookAdd() {
       index
     }
   );
-
-  if (checkIfBookExists(newBook)) {
-    // TODO: error message or something
-    alert('The book already exists!');
-    return;
-  }
 
   createBookCard(newBook);
   bookStorage.saveBook(newBook);
@@ -267,9 +275,13 @@ function getFromLocalStorage() {
   return obj;
 }
 
-function checkIfBookExists({title: newTitle} = bookObj) {
-  for (let {title} of bookStorage.values()) {
-    if (title === newTitle) return true;
+function doesBookAlreadyExist() {
+  let newTitle = form.title.value.toLowerCase();
+
+  for (let { title } of bookStorage.values()) {
+    let alreadyExistingTitle = title.toLowerCase();
+
+    if (newTitle === alreadyExistingTitle) return true;
   }
 }
 

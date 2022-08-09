@@ -87,6 +87,20 @@ form {
   transition: transform 0.4s;
 }
 
+form::before {
+  content: ".";
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s;
+}
+
+.error::before {
+  content: 'This title is already stored!';
+  color: red;
+  opacity: 1;
+  visibility: visible;
+}
+
 form input,
 .read-wrapper {
   padding: 5px;
