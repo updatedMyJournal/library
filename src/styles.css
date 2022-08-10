@@ -175,6 +175,10 @@ input[type="number"],
   border-radius: var(--brd-radius);
 }
 
+input:focus {
+  outline: 1px solid black;
+}
+
 input[type="text"],
 input[type="number"] {
   border: 1px solid black;
@@ -191,6 +195,15 @@ input[type="checkbox"] {
   margin: 0;
   border: 2px solid black;
   background-color: black;
+  outline: none;
+}
+
+input[type="checkbox"]:focus {
+  box-shadow: 0 0 2px 2px rgb(var(--negative-full-color));
+}
+
+input[type="checkbox"]:checked:focus {
+  box-shadow: 0 0 2px 2px rgb(var(--positive-full-color));
 }
 
 input[type="checkbox"]::before {
