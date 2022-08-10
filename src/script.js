@@ -225,6 +225,7 @@ function refreshBookCard(elem) {
   cardAuthor.textContent = bookObj.author;
   cardTitle.textContent = bookObj.title;
   cardPages.textContent = `${bookObj.pages} page(s)`;
+  cardRead.textContent = getReadButtonText(bookObj.read);
 
   if (tooManySymbols(cardAuthor.textContent)) {
     cardAuthor.title = cardAuthor.textContent;
