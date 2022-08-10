@@ -190,8 +190,8 @@ function onBookAdd() {
 
   let newBook = new Book(
     { 
-      author: form.author.value,
-      title: form.title.value,
+      author: form.author.value.trim(),
+      title: form.title.value.trim(),
       pages: form.pages.value,
       read: form.read.checked,
       index
@@ -204,9 +204,11 @@ function onBookAdd() {
 
 function onBookEdit(elem) {
   let bookObj = getBookObjFromBookStorage(elem);
+  let authorT = form.author.value.trim();
+  let titleT = form.title.value.trim();
 
-  bookObj.author = form.author.value;
-  bookObj.title = form.title.value; 
+  bookObj.author = authorT;
+  bookObj.title = titleT;
   bookObj.pages = form.pages.value;
   bookObj.read = form.read.checked;
 
