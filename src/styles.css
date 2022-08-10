@@ -245,6 +245,7 @@ input[type="checkbox"]:checked::after {
 
 button {
   transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+  border: none;
 }
 
 .read-wrapper {
