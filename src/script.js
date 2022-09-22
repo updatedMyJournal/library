@@ -131,10 +131,11 @@ form.onsubmit = (e) => {
 
 form.onkeydown = (e) => {
   let targetInputField = e.target.closest('input');
+  let key = e.code ? e.code : e.key;
 
   if (!targetInputField) return;
-  
-   if (e.code == 'Enter') {
+
+  if (key == 'Enter') {
     e.preventDefault();
     form.requestSubmit(submitButton);
   }
@@ -349,7 +350,7 @@ function calculateIndex() {
 }
 
 function handleKeyNavigationInForm(e) {
-  let keyPressed = e.code;
+  let keyPressed = e.code ? e.code : e.key;
   let firstFormElem = form.author;
   let lastFormElem = submitButton;
 
